@@ -43,17 +43,17 @@ function changeVideo(path) {
     // Fade out the current video
     videoCharacter.style.opacity = 0;
 
-    // Use a transitionend event to ensure the video change occurs after the fade-out
-    videoCharacter.addEventListener('transitionend', () => {
-        // Change the video source and reload it after fade-out
+    setTimeout(() => {
+        // Change the video source after the fade-out
         videoCharacter.src = path;
         videoCharacter.load();  // Reload the video
         videoCharacter.play();  // Play the new video
-        
-        // Fade in the new video
+
+        // Fade in the new video after changing the source
         videoCharacter.style.opacity = 1;
-    }, { once: true }); // Use { once: true } to ensure the listener is removed after execution
+    }, 300); // Adjust delay for a smoother transition (300ms)
 }
+
 
 
 // Load the default video on page load with looping enabled
