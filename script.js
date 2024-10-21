@@ -113,7 +113,10 @@ async function chatbotReply(userMessage) {
     if (ttsResult.audioContent) {
         // Decode the base64 audio content and play it
         const audio = new Audio("data:audio/mp3;base64," + ttsResult.audioContent);
-        
+
+            if (isSpeaking) {
+            speechSynthesis.cancel(); // Cancel the current speaking
+        }
         // Start the chatbot video when the chatbot starts speaking
         audio.onplay = function() {
             changeVideo('video.mp4'); // Change to the chatbot interaction video
