@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot with Video Animation</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        #video-character {
+            width: 100%;
+            height: auto; /* Ensures full width with aspect ratio maintained */
+            filter: contrast(150%) brightness(100%);
+
+            opacity: 0; /* Start hidden */
+            transition: opacity 0.5s ease-in-out; /* Transition effect */
+        }
+
+
+/* Class to trigger fade-in */
+.fade-in {
+    opacity: 1; /* Fully visible */
+}
+
+/* Class to trigger fade-out */
+.fade-out {
+    opacity: 1; /* Fully hidden */
+}
+
+        .chatbot-container {
+            max-width: 90%;
+            margin: 0 auto;
+            height: 80%;
+        
+        }
+        @media only screen and (max-width: 768px) {
+    .chatbot-container {
+        max-width: 100%;
+        height: 70%; /* Adjust height for smaller screens */
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .chatbot-container {
+        max-width: 100%;
+        height: 60%; /* Further adjust height for very small screens */
+        padding: 10px; /* Add some padding for small screens */
+    }
+}
+
+        .chat-area {
+            margin-top: 10px;
+        }
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+    
+            background-color: rgba(0, 0, 0, 0.6); /* Black background with transparency */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+     
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+   
+            text-align: center;
+
+
+            background-color: #fff;
+            border-radius: 20px;
+
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.2);
+            animation: modalFadeIn 0.5s ease;
+        }
+        @keyframes modalFadeIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: #000;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+        }
+
+        p, ul {
+            font-family: 'Arial', sans-serif;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin: 10px 0;
+            padding-left: 25px;
+            text-align: left;
+            position: relative;
+        }
+
+        ul li:before {
+            content: '\f058'; /* Font Awesome check icon */
+            font-family: 'FontAwesome';
+            color: #4CAF50;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 18px;
+        }
+
+        /* Separate button style for "Show Instructions" */
+
+        button:hover {
+            background-color: #ffa600;
+            transform: scale(1.05);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+
+        #chat-input,
+        #chat-output,
+        #send-button,
+        #toggle-chat-button
+        
+        {
+
+            display: none;
+
+        }  
+    
+        #micButton {
+    position: absolute; /* Positioning relative to the chatbot-container */
+    top: 10px; /* Stick to the top with some spacing */
+    left: 50%; /* Move to the center horizontally */
+    transform: translateX(-50%); /* Adjust to center properly */
+    padding: 10px;
+    z-index: 1; /* Ensure the button stays above the video */
+    height: 45px;
+    border-radius: 20px;
+    font-size: large;
+}
+    </style>
+</head>
+<body>
+    
+    <div class="chatbot-container">
+
+        <div id="background-content" class="blurred-background">
+            <!-- Your background content goes here -->
+
+            <div class="video-wrapper" style="position: relative;">
+                <video id="video-character" preload="auto" muted>
+                    Your browser does not support HTML5 video.
+                </video>
+        
+                <!-- Centered button -->
+                
+            </div>
+            
+        </div>
+        <button id="welcome-button"  style="padding: 10px; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50px;">
+            <img src="start.png" alt="Let's Start!" style="width: 100%; height: auto; border-radius: 50%;">
+        </button>
+        
+        <!-- Chatbot message area -->
+        <div class="chat-area">
+             <button id="micButton" onclick="toggleMic()" style="padding: 10px; ">Start Listening</button>
+           <!--<button id="welcome-button" style="padding: 10px;" >Let's Start!</button>-->
+            <button id="toggle-chat-button" style="padding: 10px;" onclick="toggleChatOutput()">Hide Text</button>
+
+
+            
+
+            <!-- <button id="speakerButton" onclick="toggleSpeaker()" style="padding: 10px;" disabled>Mute Speaker</button> -->
+            
+            <!-- Listening animation container -->
+            <div id="listening-animation" style="display: none;">
+                <div class="dot-pulse"></div> 
+                <span>Listening...</span>
+            </div>
+        
+            <div id="chat-output"></div>
+            <input type="text" id="chat-input" placeholder="Type a message..." />
+            <button id="send-button"><i class="fas fa-paper-plane"></i>Send</button>
+            <!-- <button id="instruction-button" class="instruction-button" onclick="openModal()">Show Instructions</button> -->
+
+        </div>
+        
+    </div>
+
+
+    <div id="instructionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2>Instructions</h2>
+            <p>Welcome ! Here’s how to use it:</p>
+            <ul>
+                <li>Click the "Start Listening" button to activate voice input.</li>
+                <li>Type your message in the chat input box and click "Send" to chat.</li>
+                <li>Click "Let's Start" to initiate the chatbot.</li>
+                <li>To hide the chatbot's text output, use the "Hide Text" button.</li>
+                <li>Try speaking small sentences rather than saying single words like 'Yes' or 'Ok'</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Dialogflow Messenger Integration -->
+    <script>
+        // Get the modal
+        var modal = document.getElementById('instructionModal');
+
+        // Function to open the modal
+        function openModal() {
+            modal.style.display = 'block';
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Close the modal if the user clicks outside of it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
