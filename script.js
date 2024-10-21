@@ -43,17 +43,17 @@ function changeVideo(path) {
     // Fade out the current video
     videoCharacter.style.opacity = 0;
 
-    setTimeout(() => {
-        // Change the video source after the fade-out
+    // Use a transitionend event to ensure the video change occurs after the fade-out
+    videoCharacter.addEventListener('transitionend', () => {
+        // Change the video source and reload it after fade-out
         videoCharacter.src = path;
         videoCharacter.load();  // Reload the video
         videoCharacter.play();  // Play the new video
-
-        // Fade in the new video after changing the source
+        
+        // Fade in the new video
         videoCharacter.style.opacity = 1;
-    }, 300); // Adjust delay for a smoother transition (300ms)
+    }, { once: true }); // Use { once: true } to ensure the listener is removed after execution
 }
-
 
 
 // Load the default video on page load with looping enabled
@@ -114,9 +114,10 @@ async function chatbotReply(userMessage) {
         // Decode the base64 audio content and play it
         const audio = new Audio("data:audio/mp3;base64," + ttsResult.audioContent);
 
-            if (isSpeaking) {
+        if (isSpeaking) {
             speechSynthesis.cancel(); // Cancel the current speaking
         }
+        
         // Start the chatbot video when the chatbot starts speaking
         audio.onplay = function() {
             changeVideo('video.mp4'); // Change to the chatbot interaction video
