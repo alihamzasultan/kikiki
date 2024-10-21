@@ -250,7 +250,7 @@ button:active {
     opacity: 0; /* Initially hidden */
     border-radius: 15px; /* Rounded corners for a modern look */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
-    filter: contrast(150%) brightness(100%);
+    filter: contrast(120%) brightness(100%) ;
 }
 
 
