@@ -144,6 +144,7 @@ function resetMic() {
         recognizing = false; // Set recognizing to false
     }
     setTimeout(() => {
+        recognition.stop();
         recognition.start(); // Restart the mic
         recognizing = true; // Set recognizing to true
         console.log("recognition started again")
@@ -203,6 +204,7 @@ async function handleInterruption() {
                     interruptDetected = false;  // Reset interruption detection
                     isSpeaking = false;  // Reset speaking flag
                     recognizing = false;
+                    recognition.stop();
                     recognition.start();  // Automatically start listening
                     toggleMic();  // Start listening again
                 };
@@ -323,10 +325,7 @@ async function toggleMic() {
     // Check if microphone access has been granted
     const permission = await navigator.permissions.query({ name: 'microphone' });
     
-    if (permission.state !== 'granted') {
-        alert('Microphone access is required to use this feature. Please grant access and try again.');
-        return; // Exit if microphone access is not granted
-    }
+
 
     if (recognizing) {
         recognition.stop(); // Manually stop recognition
